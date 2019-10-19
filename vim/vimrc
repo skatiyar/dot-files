@@ -1,0 +1,244 @@
+" Load vim plug
+call plug#begin('~/.vim/plugged')
+
+" Dracula theme
+Plug 'dracula/vim', { 'as': 'dracula' }
+" Golang support
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Code auto complete
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Initialize plugin system
+call plug#end()
+
+" Turn off linewise keys. Normally, the 'j' and 'k' keys move the cursor down
+" one entire line. with line wrapping on, this can cause the cursor to actually
+" skip a few lines on the screen because it's moving from line N to line N+1 in the file.
+" This makes it to act more visually -- I want 'down' to mean the next line on the screen
+nmap j gj
+nmap k gk
+
+" enable filetype plugins
+filetype plugin indent on
+
+" NOTE this fixes tmux render for screen-256color
+" set Vim-specific sequences for RGB colors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
+" disable vi compatibility
+set nocompatible
+set termguicolors
+
+" disable modelines, prevents some security exploits
+" modelines are set in source files like .c, .js etc
+" to give specific arguments to vim when editing that file
+set modelines=0
+
+" enable syntax
+syntax on
+
+" color scheme
+set background=dark
+colorscheme dracula
+
+let g:lightline = { 'colorscheme': 'PaperColor' }
+" NOTE use lightline.vim instead
+" set status line
+" set laststatus=2
+" set statusline=[%f]                       " path to the file
+" set statusline+=\ [%l/%L]                 " line label
+" set statusline+=%#warningmsg#
+" set statusline+=%*
+
+" basic settings to make vim saner
+set encoding=utf-8
+set scrolloff=3
+set autoindent
+set showmode
+set showcmd
+set hidden
+set visualbell
+set cursorline
+set ttyfast
+
+" show current position
+set ruler
+
+" set line numbers
+set number
+
+" Keep the ALE sign gutter open at all times
+" let g:ale_sign_column_always = 1
+
+" Select go Ale linters
+let g:ale_linters = {
+  \ 'go': ['gofmt', 'goimports', 'go vet'],
+  \ 'javascript': ['eslint'],
+  \ 'jsx': ['eslint'],
+\ }
+
+let g:ale_fixers = {
+  \ 'javascript': ['eslint'],
+  \ 'jsx': ['eslint']
+\ }
+
+" Don't run Ale while typing
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 0
+let g:ale_fix_on_save = 1
+
+" Do not lint or fix minified files.
+let g:ale_pattern_options = {
+    \ '\.min\.js$': {'ale_linters': [], 'ale_fixers': []},
+    \ '\.min\.css$': {'ale_linters': [], 'ale_fixers': []},
+\ }
+
+" fixes delete on mac and backspace problem
+set backspace=indent,eol,start
+
+" enable code folding
+" set foldmethod=indent
+" set foldnestmax=3
+
+" Use the space key to toggle folds
+" nnoremap <space> za
+" vnoremap <space> zf
+
+" yank to system clipboard
+set clipboard=unnamed
+
+" set a <leader> key
+let mapleader = '.'
+
+" FZF (replaces Ctrl-P, FuzzyFinder and Command-T)
+set rtp+=/usr/local/opt/fzf
+nmap ; :Buffers<CR>
+nmap <Leader>r :Tags<CR>
+nmap <Leader>t :Files<CR>
+" nmap <Leader>a :Ag<CR>
+
+" Tell ack.vim to use ag (the Silver Searcher) instead
+" let g:ackprg = 'ag --vimgrep'
+
+" fix Vim's horribly broken default regex handling
+nnoremap / /\v
+vnoremap / /\v
+
+" applies substitutions globally on lines
+set gdefault
+
+" configure tab settings
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+
+" if one or more characters is uppercase, search
+" will be case-sensitive otherwise case-insensitive
+set ignorecase
+set smartcase
+
+" set search defaults
+set incsearch
+set showmatch
+set hlsearch
+
+" map leader + space to remove search
+" when done searching
+nnoremap <leader><space> :noh<cr>
+
+" make the tab key match bracket pairs
+" instead of %
+nnoremap <tab> %
+vnoremap <tab> %
+
+" set wildmenu options
+" wildmenu is the bottom cmd interface
+" I dont use it so disable it
+" set wildmenu
+" set wildmode=list:longest
+
+" enable deoplete
+" don't use since vim starts slowly
+let g:deoplete#enable_at_startup = 1
+
+" disable preview
+set completeopt-=preview
+
+" enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+
+" vim-json config
+let g:vim_json_syntax_conceal = 0
+
+" vim-terrform config
+let g:terraform_align = 1
+let g:terraform_fmt_on_save = 1
+
+" Enable prettier
+" let g:prettier#autoformat = 0
+" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
+
+" auto fmt rust files
+let g:rustfmt_autosave = 1
+let g:rustfmt_fail_silently = 0
+
+let g:racer_cmd = 'racer'
+let g:racer_experimental_completer = 1
+let RUST_SRC_PATH=system('$(rustc --print sysroot)/lib/rustlib/src/rust/src')
+" neocomplete for rust
+" if pattern matches, local omnifunc will be called
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+let g:neocomplete#sources#omni#input_patterns.rust =
+  \ '[^.[:digit:] *\t]\%(\.\|\::\)\%(\h\w*\)\?'
+
+" turn off vim recording for good
+map q <Nop>
+
+let g:LanguageClient_serverCommands = {
+  \ 'reason': ['ocaml-language-server', '--stdio'],
+  \ 'ocaml': ['ocaml-language-server', '--stdio'],
+  \ }
+
+nnoremap <silent> gf :call LanguageClient_textDocument_formatting()<cr>
+" ## added by OPAM user-setup for vim / base ## 93ee63e278bdfc07d1139a748ed3fff2 ## you can edit, but keep this line
+let s:opam_share_dir = system("opam config var share")
+let s:opam_share_dir = substitute(s:opam_share_dir, '[\r\n]*$', '', '')
+
+let s:opam_configuration = {}
+
+function! OpamConfOcpIndent()
+  execute "set rtp^=" . s:opam_share_dir . "/ocp-indent/vim"
+endfunction
+let s:opam_configuration['ocp-indent'] = function('OpamConfOcpIndent')
+
+function! OpamConfOcpIndex()
+  execute "set rtp+=" . s:opam_share_dir . "/ocp-index/vim"
+endfunction
+let s:opam_configuration['ocp-index'] = function('OpamConfOcpIndex')
+
+function! OpamConfMerlin()
+  let l:dir = s:opam_share_dir . "/merlin/vim"
+  execute "set rtp+=" . l:dir
+endfunction
+let s:opam_configuration['merlin'] = function('OpamConfMerlin')
+
+let s:opam_packages = ["ocp-indent", "ocp-index", "merlin"]
+let s:opam_check_cmdline = ["opam list --installed --short --safe --color=never"] + s:opam_packages
+let s:opam_available_tools = split(system(join(s:opam_check_cmdline)))
+for tool in s:opam_packages
+  " Respect package order (merlin should be after ocp-index)
+  if count(s:opam_available_tools, tool) > 0
+    call s:opam_configuration[tool]()
+  endif
+endfor
+" ## end of OPAM user-setup addition for vim / base ## keep this line

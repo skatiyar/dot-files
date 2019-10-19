@@ -1,4 +1,7 @@
-export LC_ALL=C
+# Load aliases
+source $HOME/.aliases.sh
+
+export LC_ALL=en_US.UTF-8
 
 # Add sbin to path
 export PATH="/usr/local/sbin:$PATH"
@@ -9,12 +12,6 @@ export EVENT_NOKQUEUE=1
 export GOPATH=~/Work/golang
 export PATH=$GOPATH/bin:$PATH
 export GO111MODULE=auto
-
-# aliases
-alias tn="tmux -u new -s"
-alias ta="tmux -u attach -t"
-alias tl="tmux -u ls"
-alias via="vim -c ProseMode"
 
 # tensorflow
 # Change to "gpu" for GPU support
