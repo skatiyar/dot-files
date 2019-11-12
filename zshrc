@@ -9,7 +9,5 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-# Load aliases
-source $HOME/.aliases
-
-export LC_ALL=en_US.UTF-8
+# Load configs common between shells.
+source $HOME/.commonrc.sh

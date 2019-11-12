@@ -2,15 +2,15 @@
 
 set -e
 
-cwd=$(pwd)
-links=("profile" "bash_profile" "bashrc" "zshrc" "aliases.sh" "tmux.conf" "vim")
+CWD=${CWD:-$(pwd)}
+links=("profile" "bash_profile" "bashrc" "zshrc" "aliases.sh" "tmux.conf" "vim" "commonrc.sh")
 
 cd $HOME
 
 # Create symlinks
 for link in ${links[@]}
 do
-    ln -sf "$cwd/$link" ".$link"
+    ln -sf "$CWD/$link" ".$link"
 done
 
-cd $pwd
+cd $CWD

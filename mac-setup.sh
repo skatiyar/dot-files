@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -6,19 +6,17 @@ set -e
 echo "-> Hello me! congrats on throwing out the junk!"
 # hopefully I will run this only when I buy a new mac
 
+CWD=$(pwd)
+
 # install brew or update brew
 if test ! $(which brew) ; then
 	echo "-> Installing brew"
 	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-    # Setup basic packages like git, bash, vim & tmux
-    # install git
-    brew install git --with-brewed-openssl --with-brewed-curl --with-blk-sha1 --with-brewed-svn
-    brew install bash
-    brew install vim --override-system-vi
-    brew install tmux
+    # Setup basic packages like git, bash, vim, tmux etc.
+    brew install git bash vim tmux fd fzf reattach-to-user-namespace tree wget the_silver_searcher
 else
-	echo "-> Found brew, updating"
+	echo "-> Found brew, updating."
 	brew upgrade
 fi
 
@@ -32,13 +30,33 @@ if [ ! -f "$ID_RSA" ]; then
 	read $EMAIL
 	ssh-keygen -t rsa -b 4096 -C "$EMAIL"
 	eval "$(ssh-agent -s)"
-	ssh-add ~/.ssh/id_rsa
+	ssh-add $HOME/.ssh/id_rsa
 	echo "-> SSH setup complete, add public key."
 else
     echo "-> SSH already setup."
 fi
 
 # install nvm
+echo "-> Setting up NodeJS using NVM."
+NVM_DIR=$HOME/.nvm
+if [ ! -f "$NVM_DIR/nvm.sh" ]  ; then
+    git clone https://github.com/nvm-sh/nvm.git $NVM_DIR
+    cd $NVM_DIR
+    git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
+    cd $CWD
+    source $NVM_DIR/nvm.sh
+    echo "-> Installing latest node LTS."
+    nvm install --lts
+    nvm alias default node
+else
+    echo "-> NVM already setup, upgrading."
+    cd $NVM_DIR
+    git fetch --tags origin
+    git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
+    cd $CWD
+    source $NVM_DIR/nvm.sh
+fi
+echo "-> NodeJS version: $(node --version)"
 
 
 # install gvm (golang)
