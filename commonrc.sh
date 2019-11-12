@@ -24,4 +24,4 @@ source ~/.cargo/env
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 
 # Setup fzf for vim
-export FZF_DEFAULT_COMMAND='ag --hidden'
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'

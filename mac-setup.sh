@@ -14,7 +14,7 @@ if test ! $(which brew) ; then
 	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
     # Setup basic packages like git, bash, vim, tmux etc.
-    brew install git bash vim tmux fd fzf reattach-to-user-namespace tree wget the_silver_searcher
+    brew install git bash vim tmux fd fzf reattach-to-user-namespace tree wget
 else
 	echo "-> Found brew, updating."
 	brew upgrade

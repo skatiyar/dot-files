@@ -39,7 +39,6 @@ fi
 # fzf auto completion
 if ! declare -f _fzf_compgen_file_path > /dev/null; then
     _fzf_compgen_file_path() {
-        echo "$1"
         command fd --type f --hidden --exclude .git --no-ignore-vcs "$1" 2> /dev/null | sed 's@^\./@@'
     }
 fi
