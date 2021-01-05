@@ -2,9 +2,7 @@
 
 set -e
 
-# setting up mac
-echo "-> Hello me! congrats on throwing out the junk!"
-# hopefully I will run this only when I buy a new mac
+echo "-> Setting up mac!"
 
 CWD=$(pwd)
 
@@ -14,7 +12,10 @@ if test ! $(which brew) ; then
 	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
     # Setup basic packages like git, bash, vim, tmux etc.
-    brew install git bash vim tmux fd fzf reattach-to-user-namespace tree wget
+    brew install git bash vim coreutils curl \
+                 tmux fd fzf tree wget \
+                 reattach-to-user-namespace \
+                 stow starship asdf
 else
 	echo "-> Found brew, updating."
 	brew upgrade
@@ -36,48 +37,45 @@ else
     echo "-> SSH already setup."
 fi
 
-# install nvm
-echo "-> Setting up NodeJS using NVM."
-NVM_DIR=$HOME/.nvm
-if [ ! -f "$NVM_DIR/nvm.sh" ]  ; then
-    git clone https://github.com/nvm-sh/nvm.git $NVM_DIR
-    cd $NVM_DIR
-    git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
-    cd $CWD
-    source $NVM_DIR/nvm.sh
-    echo "-> Installing latest node LTS."
-    nvm install --lts
-    nvm alias default node
+# Setup ASDF
+echo "-> Setup ASDF"
+if asdf plugin list | grep -q 'golang'; then
+    echo "-> Update Golang plugin"
+    asdf plugin update golang
 else
-    echo "-> NVM already setup, upgrading."
-    cd $NVM_DIR
-    git fetch --tags origin
-    git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1)`
-    cd $CWD
-    source $NVM_DIR/nvm.sh
+    echo "-> Add Golang plugin"
+    asdf plugin add golang
 fi
-echo "-> NodeJS version: $(node --version)"
+if asdf plugin list | grep -q 'nodejs'; then
+    echo "-> Update NodeJS plugin"
+    asdf plugin update nodejs
+else
+    echo "-> Add NodeJS plugin"
+    asdf plugin add nodejs
+    # Import the Node.js release team's OpenPGP keys
+    bash -c '${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring'
+fi
 
+echo "-> Setup default versions for ASDF"
+stow -t $HOME asdf
+asdf install
 
-# install gvm (golang)
-# GVM_DIR="~/.gvm"
-# if [ ! -d "$GVM_DIR" ]; then
-#	echo "-> Installing gvm"
-#	bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-#fi
-#if test ! $(which gvm) ; then
-	# i want to use it now!!!
-#	source /Users/suyash/.gvm/scripts/gvm
-#else
-#	echo "-> Found gvm"
-#fi
+# Setup starship
+echo "-> Setup starship"
+stow -t $HOME starship
 
-# gvm install go1.4 --binary
-# i want to use golang now!!!
-# export GOROOT=/Users/suyash/.gvm/gos/go1.4
+# link dot files
+echo "-> Setup Profile"
+stow -t $HOME profile
 
-# install golang 1.6
-# gvm install go1.6 --with-protobuf --with-build-tools
+echo "-> Setup ZSH"
+stow -t $HOME zsh
+
+echo "-> Setup Bash"
+stow -t $HOME bash
+
+echo "-> Setup Aliases"
+stow -t $HOME aliases
 
 # link bash files
 echo "-> Setting up symlinks."
