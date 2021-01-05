@@ -16,6 +16,12 @@ if test ! $(which brew) ; then
                  tmux fd fzf tree wget \
                  reattach-to-user-namespace \
                  stow starship asdf
+
+    # Setup Homebrew taps
+    echo "-> Tap brew service"
+    brew tap homebrew/services
+    echo "-> Tap brew fonts"
+    brew tap homebrew/cask-fonts
 else
 	echo "-> Found brew, updating."
 	brew upgrade
@@ -77,10 +83,10 @@ stow -t $HOME bash
 echo "-> Setup Aliases"
 stow -t $HOME aliases
 
-# link bash files
-echo "-> Setting up symlinks."
-source ./create-symlinks.sh
+echo "-> Setup Tmux"
+stow -t $HOME tmux
 
+#links=("vim" "commonrc.sh")
 # Setup vim
-echo "-> Setting up VIM."
-vim +PlugInstall +qall
+# echo "-> Setting up VIM."
+# vim +PlugInstall +qall

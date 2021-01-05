@@ -1,18 +1,8 @@
-# Load aliases
-source $HOME/.aliases.sh
-
-export LC_ALL=en_US.UTF-8
-
 # Add sbin to path
 export PATH="/usr/local/sbin:$PATH"
 
-# fix for tmux error
-export EVENT_NOKQUEUE=1
-
-# Installation of nvm via homebrew is not supported
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Add flutter to path
+export PATH="$PATH:$HOME/.flutter-sdk/bin"
 
 # Setup Go
 export GOPATH=~/Work/golang

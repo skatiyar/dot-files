@@ -1,5 +1,25 @@
+export LC_ALL=en_US.UTF-8
+
+# Setup ASDF for language version management
+. /usr/local/opt/asdf/asdf.sh
+. /usr/local/opt/asdf/etc/bash_completion.d/asdf.bash
+
+# Don't check mail when opening terminal.
+unset MAILCHECK
+
+# Start starship
+eval "$(starship init bash)"
+
+# Load aliases
+if [ -f ~/.aliases ]; then
+    . $HOME/.aliases
+fi
+
+# fix for tmux error
+export EVENT_NOKQUEUE=1
+
 # Load configs common between shells.
-source $HOME/.commonrc.sh
+# source $HOME/.commonrc.sh
 
 # Android sdk
 export ANDROID_SDK_ROOT=/usr/local/share/android-sdk
@@ -10,24 +30,6 @@ export ANDROID_HOME=/usr/local/share/android-sdk
 export TF_TYPE=cpu
 # export LIBRARY_PATH=$LIBRARY_PATH:~/Work/tfplay/lib
 # export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:~/Work/tfplay/lib
-
-function parse_git_dirty {
-    [[ $(git status --porcelain 2> /dev/null | tail -n1) != "" ]] && echo " (~)"
-}
-function parse_git_branch {
-    git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1)$(parse_git_dirty)/"
-}
-
-export PS1="\u \[\033[32m\]\W\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
-
-# Auto-attach or start tmux at login
-if [[ "$TERM" != "screen" ]] && [[ "$SSH_CONNECTION" == "" ]]; then
-    if ! [ -n "$TMUX" ]; then
-        if ! tmux info &> /dev/null; then
-            ta 27AE60 || tn 27AE60
-        fi
-    fi
-fi
 
 # fzf via Homebrew
 if [ -e /usr/local/opt/fzf/shell/completion.bash ]; then
