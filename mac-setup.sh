@@ -84,6 +84,7 @@ echo "-> Setup Aliases"
 stow -t $HOME aliases
 
 echo "-> Setup Tmux"
+export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins/
 stow -t $HOME tmux
 if test ! -d $HOME/.tmux/plugins/tpm ; then
     echo "-> Install tmux plugins"
