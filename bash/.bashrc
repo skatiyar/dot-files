@@ -18,9 +18,6 @@ fi
 # fix for tmux error
 export EVENT_NOKQUEUE=1
 
-# Load configs common between shells.
-# source $HOME/.commonrc.sh
-
 # Android sdk
 export ANDROID_SDK_ROOT=/usr/local/share/android-sdk
 export ANDROID_HOME=/usr/local/share/android-sdk
@@ -36,6 +33,9 @@ if [ -e /usr/local/opt/fzf/shell/completion.bash ]; then
     source /usr/local/opt/fzf/shell/key-bindings.bash
     source /usr/local/opt/fzf/shell/completion.bash
 fi
+
+# Setup fzf for vim
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 
 # Setup autocomplete for cd & vim
 # fzf auto completion

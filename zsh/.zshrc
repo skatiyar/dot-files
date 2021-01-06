@@ -23,3 +23,6 @@ fi
 
 # fix for tmux error
 export EVENT_NOKQUEUE=1
+
+# Setup fzf for vim
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'

@@ -85,6 +85,14 @@ stow -t $HOME aliases
 
 echo "-> Setup Tmux"
 stow -t $HOME tmux
+if test ! -d $HOME/.tmux/plugins/tpm ; then
+    echo "-> Install tmux plugins"
+    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+    source $HOME/.tmux/plugins/tpm/bin/install_plugins
+else
+    echo "-> Updating tmux plugins"
+    source $HOME/.tmux/plugins/tpm/bin/update_plugins all
+fi
 
 #links=("vim" "commonrc.sh")
 # Setup vim
