@@ -1,5 +1,7 @@
 # ~/.config/starship.toml
 
+command_timeout = 5000 # Timeout for commands executed by starship (in milliseconds).
+
 [aws]
 disabled = true
 
@@ -25,9 +27,6 @@ style = "bold yellow"
 [git_commit]
 commit_hash_length = 8
 style = "bold white"
-
-[git_state]
-progress_divider = " of "
 
 [git_status]
 conflicted = "⚔️ "

@@ -15,7 +15,8 @@ if test ! $(which brew) ; then
     brew install git bash vim coreutils curl \
                  tmux fd fzf tree wget \
                  reattach-to-user-namespace \
-                 stow starship asdf gnupg gnupg2
+                 stow starship asdf gnupg gnupg2 \
+                 cmake
 
     # Setup Homebrew taps
     echo "-> Tap brew service"
