@@ -1,32 +1,40 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-echo "-> Setting up mac!"
+echo "-> Setting up linux!"
 
 CWD=$(pwd)
 
-# install brew or update brew
-if test ! $(which brew) ; then
-	echo "-> Installing brew"
-	ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# install apt dependencies
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y tmux vim curl wget tree git dirmngr gpg gawk stow \
+                        autoconf bison patch build-essential rustc libssl-dev \
+                        libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
+                        libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
 
-    # Setup basic packages like git, bash, vim, tmux etc.
-    brew install git bash vim coreutils curl \
-                 tmux fd fzf tree wget \
-                 reattach-to-user-namespace \
-                 stow starship asdf gnupg gnupg2 \
-                 cmake
-
-    # Setup Homebrew taps
-    echo "-> Tap brew service"
-    brew tap homebrew/services
-    echo "-> Tap brew fonts"
-    brew tap homebrew/cask-fonts
+# install snap -> starship
+if test ! $(which starship) ; then
+    echo "-> Installing starship"
+    sudo snap install starship
 else
-	echo "-> Found brew, updating."
-	brew upgrade
+    echo "-> Update starship"
+    sudo snap refresh starship
 fi
+
+# install asdf
+if [ ! -d "$HOME/.asdf" ]; then
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+fi
+# initialize asdf
+. $HOME/.asdf/asdf.sh
+
+
+    #brew install coreutils  \
+     #             fd fzf \
+       #          gnupg gnupg2 \
+        #         cmake
 
 # initialize git
 echo "-> Setting up SSH."
@@ -59,13 +67,21 @@ if asdf plugin list | grep -q 'nodejs'; then
 else
     echo "-> Add NodeJS plugin"
     asdf plugin add nodejs
-    # Import the Node.js release team's OpenPGP keys
-    bash -c '${ASDF_DATA_DIR:=$HOME/.asdf}/plugins/nodejs/bin/import-release-team-keyring'
+fi
+if asdf plugin list | grep -q 'ruby'; then
+    echo "-> Update Ruby plugin"
+    asdf plugin update ruby
+else
+    echo "-> Add Ruby plugin"
+    asdf plugin add ruby
 fi
 
 echo "-> Setup default versions for ASDF"
 stow -t $HOME asdf
 asdf install
+
+# create backup dir for dot files
+mkdir -p "$HOME/.dot-files.bkp"
 
 # Setup starship
 echo "-> Setup starship"
@@ -73,10 +89,19 @@ stow -t $HOME starship
 
 # link dot files
 echo "-> Setup Profile"
+if [ -f "$HOME/.profile" ]; then
+    mv "$HOME/.profile" "$HOME/.dot-files.bkp"
+fi
 stow -t $HOME profile
 
-echo "-> Setup ZSH"
-stow -t $HOME zsh
+echo "-> Setup Bash"
+if [ -f "$HOME/.bash_profile" ]; then
+    mv "$HOME/.bash_profile" "$HOME/.dot-files.bkp"
+fi
+if [ -f "$HOME/.bashrc" ]; then
+    mv "$HOME/.bashrc" "$HOME/.dot-files.bkp"
+fi
+stow -t $HOME bash
 
 echo "-> Setup Aliases"
 stow -t $HOME aliases
