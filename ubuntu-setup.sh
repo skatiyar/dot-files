@@ -9,15 +9,15 @@ CWD=$(pwd)
 # install apt dependencies
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install -y tmux vim curl wget tree git dirmngr gpg gawk stow \
-                        autoconf bison patch build-essential rustc libssl-dev \
+sudo apt-get install -y unzip tmux vim curl wget tree git dirmngr gpg gawk stow \
+                        autoconf bison patch build-essential libssl-dev \
                         libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
                         libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
 
 # install snap -> starship
 if test ! $(which starship) ; then
     echo "-> Installing starship"
-    sudo snap install starship
+    sudo snap install starship --edge
 else
     echo "-> Update starship"
     sudo snap refresh starship
@@ -25,16 +25,10 @@ fi
 
 # install asdf
 if [ ! -d "$HOME/.asdf" ]; then
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.2
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.2
 fi
 # initialize asdf
 . $HOME/.asdf/asdf.sh
-
-
-    #brew install coreutils  \
-     #             fd fzf \
-       #          gnupg gnupg2 \
-        #         cmake
 
 # initialize git
 echo "-> Setting up SSH."
@@ -68,12 +62,12 @@ else
     echo "-> Add NodeJS plugin"
     asdf plugin add nodejs
 fi
-if asdf plugin list | grep -q 'ruby'; then
-    echo "-> Update Ruby plugin"
-    asdf plugin update ruby
+if asdf plugin list | grep -q 'rust'; then
+    echo "-> Update Rust plugin"
+    asdf plugin update rust
 else
-    echo "-> Add Ruby plugin"
-    asdf plugin add ruby
+    echo "-> Add Rust plugin"
+    asdf plugin-add rust https://github.com/asdf-community/asdf-rust.git
 fi
 
 echo "-> Setup default versions for ASDF"
@@ -117,8 +111,3 @@ else
     echo "-> Updating tmux plugins"
     source $HOME/.tmux/plugins/tpm/bin/update_plugins all
 fi
-
-#links=("vim" "commonrc.sh")
-# Setup vim
-# echo "-> Setting up VIM."
-# vim +PlugInstall +qall
