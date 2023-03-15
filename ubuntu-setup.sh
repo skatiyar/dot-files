@@ -1,18 +1,32 @@
 #!/bin/bash
 
+# To setup automatically use: bash <(wget -qO- https://raw.githubusercontent.com/skatiyar/dot-files/master/ubuntu-setup.sh)
+
 set -e
 
 echo "-> Setting up linux!"
 
-CWD=$(pwd)
-
 # install apt dependencies
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install -y unzip tmux vim curl wget tree git dirmngr gpg gawk stow \
+sudo apt-get install -y source unzip tmux vim curl wget tree git dirmngr gpg gawk stow \
                         autoconf bison patch build-essential libssl-dev \
                         libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
                         libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
+
+# Download & setup repo
+# create backup dir for dot files
+BACKUP_DIR="$HOME/.dot-files-backup"
+CUR_BACKUP_DIR="$BACKUP_DIR/$(date -d "today" +"%Y%m%d%H%M")"
+
+if [ ! -d "$CUR_BACKUP_DIR"  ]; then
+    mkdir -p "$CUR_BACKUP_DIR"
+    wget -O dot-files.zip https://github.com/skatiyar/dot-files/archive/refs/heads/master.zip
+    unzip dot-files.zip && rm dot-files.zip
+    cd dot-files
+fi
+    
+CWD=$(pwd)
 
 # install snap -> starship
 if test ! $(which starship) ; then
@@ -28,7 +42,7 @@ if [ ! -d "$HOME/.asdf" ]; then
     git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.2
 fi
 # initialize asdf
-. $HOME/.asdf/asdf.sh
+source $HOME/.asdf/asdf.sh
 
 # initialize git
 echo "-> Setting up SSH."
@@ -71,38 +85,46 @@ else
 fi
 
 echo "-> Setup default versions for ASDF"
+if [ -f "$HOME/.tool-versions" ]; then
+   mv "$HOME/.tool-versions" "$CUR_BACKUP_DIR"
+fi
 stow -t $HOME asdf
 asdf install
 
-# create backup dir for dot files
-mkdir -p "$HOME/.dot-files.bkp"
-
 # Setup starship
 echo "-> Setup starship"
+if [ -f "$HOME/.config" ]; then
+   mv "$HOME/.config" "$CUR_BACKUP_DIR"
+fi
 stow -t $HOME starship
 
 # link dot files
 echo "-> Setup Profile"
 if [ -f "$HOME/.profile" ]; then
-    mv "$HOME/.profile" "$HOME/.dot-files.bkp"
+    mv "$HOME/.profile" "$CUR_BACKUP_DIR"
 fi
 stow -t $HOME profile
 
 echo "-> Setup Bash"
 if [ -f "$HOME/.bash_profile" ]; then
-    mv "$HOME/.bash_profile" "$HOME/.dot-files.bkp"
+    mv "$HOME/.bash_profile" "$CUR_BACKUP_DIR"
 fi
 if [ -f "$HOME/.bashrc" ]; then
-    mv "$HOME/.bashrc" "$HOME/.dot-files.bkp"
+    mv "$HOME/.bashrc" "$CUR_BACKUP_DIR"
 fi
 stow -t $HOME bash
 
 echo "-> Setup Aliases"
+if [ -f "$HOME/.aliases" ]; then
+    mv "$HOME/.aliases" "$CUR_BACKUP_DIR"
+fi
 stow -t $HOME aliases
 
 echo "-> Setup Tmux"
 export TMUX_PLUGIN_MANAGER_PATH=$HOME/.tmux/plugins/
-stow -t $HOME tmux
+if [ -f "$HOME/.tmux.conf" ]; then
+    mv "$HOME/.tmux.conf" "$CUR_BACKUP_DIR"
+fi
 if test ! -d $HOME/.tmux/plugins/tpm ; then
     echo "-> Install tmux plugins"
     git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
@@ -111,3 +133,5 @@ else
     echo "-> Updating tmux plugins"
     source $HOME/.tmux/plugins/tpm/bin/update_plugins all
 fi
+stow -t $HOME tmux
+
