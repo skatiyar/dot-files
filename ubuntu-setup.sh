@@ -11,7 +11,7 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install -y unzip tmux vim curl wget tree git dirmngr gpg gawk stow \
                         autoconf bison patch build-essential libssl-dev \
-                        libyaml-dev libreadline-dev zlib1g-dev libgmp-dev \
+                        libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
                         libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
 
 # Download & setup repo
@@ -23,7 +23,7 @@ if [ ! -d "$CUR_BACKUP_DIR"  ]; then
     mkdir -p "$CUR_BACKUP_DIR"
     wget -O dot-files.zip https://github.com/skatiyar/dot-files/archive/refs/heads/master.zip
     unzip dot-files.zip && rm dot-files.zip
-    cd dot-files
+    mv dot-files-master dot-files && cd dot-files
 fi
     
 CWD=$(pwd)
