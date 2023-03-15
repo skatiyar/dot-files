@@ -11,7 +11,7 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install -y unzip tmux vim curl wget tree git dirmngr gpg gawk stow \
                         autoconf bison patch build-essential libssl-dev \
-                        libyaml-dev libreadline6-dev zlib1g-dev libgmp-dev \
+                        libyaml-dev libreadline-dev zlib1g-dev libgmp-dev \
                         libncurses5-dev libffi-dev libgdbm6 libgdbm-dev libdb-dev uuid-dev
 
 # Download & setup repo
